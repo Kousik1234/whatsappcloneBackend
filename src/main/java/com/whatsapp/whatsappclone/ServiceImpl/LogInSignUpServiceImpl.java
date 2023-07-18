@@ -1,5 +1,6 @@
 package com.whatsapp.whatsappclone.ServiceImpl;
 
+import com.sun.tools.jconsole.JConsoleContext;
 import com.whatsapp.whatsappclone.DTO.SignUpLogInDto;
 import com.whatsapp.whatsappclone.Entity.User;
 import com.whatsapp.whatsappclone.Exception.UserException;
@@ -10,6 +11,8 @@ import com.whatsapp.whatsappclone.Service.LogInSignUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class LogInSignUpServiceImpl implements LogInSignUpService {
@@ -23,10 +26,9 @@ public class LogInSignUpServiceImpl implements LogInSignUpService {
 
     @Override
     public AuthResponse signUp(SignUpLogInDto Dto) throws UserException {
-
         User user = new User();
-        User dbuser = userRepo.findByEmail(Dto.getEmail()).get();
-        if (dbuser == null) {
+        Optional<User> dbuser = userRepo.findByEmail(Dto.getEmail());
+        if (dbuser.isEmpty()) {
             user.setFullname(Dto.getFullname());
             user.setEmail(Dto.getEmail());
             user.setProfile_picture(Dto.getProfile_picture());
@@ -41,11 +43,11 @@ public class LogInSignUpServiceImpl implements LogInSignUpService {
 
     @Override
     public AuthResponse logIn(SignUpLogInDto Dto) throws UserException {
-        User user = userRepo.findByEmail(Dto.getEmail()).get();
-        if (user == null) {
+        Optional<User> user = userRepo.findByEmail(Dto.getEmail());
+        if (user.isEmpty()) {
             throw new UserException("User Not Found !");
         } else {
-            if (passwordEncoder.matches(Dto.getPassword(), user.getPassword())) {
+            if (passwordEncoder.matches(Dto.getPassword(), user.get().getPassword())) {
                 AuthResponse authResponse = new AuthResponse(jwtService.generateToken(Dto.getEmail()), "User LogIn Succesfully");
                 return authResponse;
             } else {

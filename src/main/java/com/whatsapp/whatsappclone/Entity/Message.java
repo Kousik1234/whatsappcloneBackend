@@ -21,9 +21,7 @@ public class Message {
 
     private LocalDateTime timeStamp;
     @ManyToOne
-    @JsonIgnore
     private User user;
     @ManyToOne
-    @JsonIgnore
     private Chat chat;
 }

@@ -37,7 +37,7 @@ public class LogInSignUpController {
 
 
 
-    @GetMapping("login")
+    @PostMapping("login")
     public ResponseEntity<?>  logInHandeller (@Valid @RequestBody SignUpLogInDto signUpLogInDto) {
         ErrorMessageDto errorMessageDto = new ErrorMessageDto();
 

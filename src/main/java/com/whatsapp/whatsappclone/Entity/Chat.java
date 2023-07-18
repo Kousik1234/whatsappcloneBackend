@@ -31,12 +31,12 @@ public class Chat {
     @JsonIgnore
     private User createdBy;
     @ManyToMany
-    @JsonIgnore
+//    @JsonIgnore
     private Set<User> users = new HashSet<>();
     @OneToMany
-    @JsonIgnore
+//    @JsonIgnore
     private List<Message> messages = new ArrayList<>();
     @ManyToMany
-    @JsonIgnore
+//    @JsonIgnore
     private Set<User> admin = new HashSet<>();
 }
