@@ -48,8 +48,12 @@ public class UserServiceImpl implements UserService {
             if (user == null) {
                 throw new UserException("User Not Found");
             } else {
-                user.setFullname(userDto.getFullname());
-                user.setProfile_picture(userDto.getProfile_picture());
+                if(userDto.getFullname()!=null) {
+                    user.setFullname(userDto.getFullname());
+                }
+                if(userDto.getProfile_picture()!=null) {
+                    user.setProfile_picture(userDto.getProfile_picture());
+                }
                 userRepo.save(user);
                 return "Profile Update Succesfully";
             }
