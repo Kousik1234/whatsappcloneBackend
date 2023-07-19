@@ -39,14 +39,14 @@ public class UserController {
 
     }
 
-    @PutMapping("update/{userId}/user")
-    public ResponseEntity<?> updateUserHandeller(@PathVariable Long userId , @Valid @RequestBody UserDto userDto) {
+    @PutMapping("update/user")
+    public ResponseEntity<?> updateUserHandeller(@RequestParam String jwt , @Valid @RequestBody UserDto userDto) {
         ErrorMessageDto errorMessageDto = new ErrorMessageDto();
 
         try {
-            String msz = userService.updateUser(userId, userDto);
+            String msz = userService.updateUser(jwt, userDto);
             return new ResponseEntity<>(msz,HttpStatus.OK);
-        } catch (UserException e) {
+        } catch (UserException | JwtAuthException e) {
             errorMessageDto.setMessage(e.getMessage());
             return new ResponseEntity<>(errorMessageDto,HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -55,8 +55,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("search/{emailOrname}/user")
-    public ResponseEntity<?> searchUserHandeller(@PathVariable String emailOrname) {
+    @GetMapping("search/user")
+    public ResponseEntity<?> searchUserHandeller(@RequestParam String emailOrname) {
         ErrorMessageDto errorMessageDto = new ErrorMessageDto();
 
         try {

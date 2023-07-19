@@ -41,12 +41,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateUser(Long userId, UserDto userDto) throws UserException {
-        User user = userRepo.findById(userId).orElseThrow(()-> new UserException("User Not Found"));
-        user.setFullname(userDto.getFullname());
-        user.setProfile_picture(userDto.getProfile_picture());
-        userRepo.save(user);
-        return "Profile Update Succesfully";
+    public String updateUser(String jwt, UserDto userDto) throws UserException , JwtAuthException {
+        if (jwtService.validateAuthToken(jwt)) {
+            String username = jwtService.extractUsername(jwt);
+            User user = userRepo.findByEmail(username).get();
+            if (user == null) {
+                throw new UserException("User Not Found");
+            } else {
+                if(userDto.getFullname()!=null) {
+                    user.setFullname(userDto.getFullname());
+                }
+                if(userDto.getProfile_picture()!=null) {
+                    user.setProfile_picture(userDto.getProfile_picture());
+                }
+                userRepo.save(user);
+                return "Profile Update Succesfully";
+            }
+        } else {
+            throw new JwtAuthException("token not valid");
+        }
+
     }
 
     @Override

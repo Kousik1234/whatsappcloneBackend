@@ -10,7 +10,7 @@ public interface UserService {
 
     public UserDto findUserProfile(String jwt) throws UserException , JwtAuthException;
 
-    public String updateUser(Long userId , UserDto userDto) throws UserException;
+    public String updateUser(String jwt , UserDto userDto) throws UserException , JwtAuthException;
 
     public List<UserDto> searchUser(String emailOrname) throws UserException;
 

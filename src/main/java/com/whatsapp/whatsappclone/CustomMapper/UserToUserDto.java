@@ -8,6 +8,7 @@ public class UserToUserDto implements Converter<User, UserDto> {
     @Override
     public UserDto convert(User source) {
         UserDto userDto = new UserDto();
+        userDto.setFullname(source.getFullname());
         userDto.setId(source.getId());
         userDto.setEmail(source.getEmail());
         userDto.setProfile_picture(source.getProfile_picture());

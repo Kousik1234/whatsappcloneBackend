@@ -22,10 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -43,8 +44,9 @@ public class AppConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
+                .cors().and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/**").permitAll()
+                .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
@@ -63,15 +65,26 @@ public class AppConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+    public CorsFilter corsFilter() {
+        CorsConfiguration websocketConfig = new CorsConfiguration();
+        websocketConfig.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        websocketConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        websocketConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+        CorsConfiguration apiConfig = new CorsConfiguration();
+        apiConfig.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        apiConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        apiConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+        // Allow WebSocket connections
+        source.registerCorsConfiguration("http://localhost:3000", websocketConfig);
+        // Allow other API requests
+        source.registerCorsConfiguration("/api/v1/**", apiConfig);
+
+        return new CorsFilter(source);
     }
+
 
     @Bean
     public UserToUserDto userToUserDto() {
